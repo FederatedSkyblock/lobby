@@ -1,0 +1,14 @@
+# Gradle / build output
+.gradle
+build/
+out/
+.kotlin
+
+# IntelliJ
+.idea
+*.iml
+.idea_modules/
+
+# OS
+.DS_Store
+hs_err_pid*

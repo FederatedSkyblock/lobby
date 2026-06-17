@@ -1,0 +1,16 @@
+name: LobbyPlugin
+version: '${version}'
+
+main: fr.overrride.minecraft.skyblockplugin.lobby.LobbyPlugin
+api-version: '1.21'
+load: POSTWORLD
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    ChestShop:
+      load: BEFORE
+      required: false
+      join-classpath: true

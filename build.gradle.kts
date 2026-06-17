@@ -1,0 +1,50 @@
+plugins {
+    kotlin("jvm") version "2.4.0"
+    id("com.gradleup.shadow") version "9.4.2"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
+}
+
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://jitpack.io")
+    maven("https://repo.triumphteam.dev/snapshots")
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
+    // Shared code from the server repo (git submodule, wired via includeBuild in settings.gradle.kts).
+    // Its transitive runtime deps (mysql, triumph-gui, kotlin-stdlib) are shaded in below.
+    implementation("fr.overrride.skyblock:common")
+}
+
+kotlin {
+    jvmToolchain(25)
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+
+    shadowJar {
+        relocate("com.mysql", "fr.overrride.minecraft.skyblockplugin.libs.mysql")
+        relocate("com.google.protobuf", "fr.overrride.minecraft.skyblockplugin.libs.protobuf")
+        relocate("dev.triumphteam", "fr.overrride.minecraft.skyblockplugin.libs.triumphteam")
+    }
+
+    runServer {
+        minecraftVersion("1.21.11")
+        jvmArgs("-Xms1G", "-Xmx1G")
+    }
+
+    processResources {
+        val props = mapOf("version" to version)
+        filesMatching("paper-plugin.yml") {
+            expand(props)
+        }
+    }
+}
